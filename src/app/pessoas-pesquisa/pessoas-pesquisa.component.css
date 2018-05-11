@@ -1,0 +1,9 @@
+a.pessoa-status{
+  color:#000000;
+  text-decoration: none;
+}
+
+a.pessoa-status:hover{
+  color:rgb(37, 37, 37);
+  text-decoration: underline;
+}
