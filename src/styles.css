@@ -32,3 +32,13 @@ label{
   width: 90px;
   text-align: center;
 }
+
+.receita td.col-valor{
+  color: blue;
+}
+.despesa td.col-valor{
+  color: red;
+}
+.ui-state-highlight td{
+  color: white !important;
+}

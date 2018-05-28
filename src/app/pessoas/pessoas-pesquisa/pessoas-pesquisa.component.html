@@ -1,29 +1,71 @@
 <div class="container">
     <div class="ui-g">
 
+      <form autocomplete="off" (ngSubmit)="pesquisar()">
+
       <div class="ui-g-12">
         <h1>Pessoas</h1>
       </div>
 
       <div class="ui-g-12 ui-fluid">
         <label>Nome</label>
-        <input pInputText type="text">
+        <input pInputText type="text" name="nome" [(ngModel)]="filtro.nome" >
       </div>
 
       <div class="ui-g-12">
-        <button pButton type="submit" label="Pesquisar"></button>
+        <button pButton type="submit" name="pesquisar" label="Pesquisar"></button>
       </div>
+
+    </form>
 
       <div class="ui-g">
           <div class="ui-g-12">
-            <app-pessoas-grid [pessoas]="pessoas"></app-pessoas-grid>
+              <p-table #dt [value]="pessoas" [loading]="loading"
+              selectionMode="single" [(selection)]="selectedPessoa" (onRowSelect)="onRowSelect($event)"
+              [paginator]="true" [rows]="filtro.size"
+              [responsive]="true">
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th>Nome</th>
+                          <th>Cidade</th>
+                          <th class="">Estado</th>
+                          <th class="pessoa-status">Status</th>
+
+                      </tr>
+                  </ng-template>
+                  <ng-template let-rowData  pTemplate="body" let-pessoa>
+                      <tr [pSelectableRow]="rowData">
+                          <td>{{pessoa.nome}}</td>
+                          <td>{{pessoa.endereco.cidade}}</td>
+                          <td class="">{{pessoa.endereco.estado}}</td>
+                          <td class="">
+                            <a class="pessoa-status" (click)="toggleAtivoInativo(pessoa)" pTooltip="{{pessoa.ativo ? 'Desativar' : 'Ativar'}}">
+                                {{pessoa.ativo ? 'Ativo' : 'Inativo'}}
+                            </a>
+
+                          </td>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                      <tr>
+                          <td [attr.colspan]="5">
+                              Nenhum registro encontrado
+                          </td>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary" let-rowData>
+                      <div style="text-align:left" #botoesEditarExcluir style="display: none;">
+                          <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top"></button>
+                          <button pButton icon="fa-trash" pTooltip="Excluir" tooltipPosition="top" (click)="apagar()" ></button>
+                      </div>
+                  </ng-template>
+                </p-table>
           </div>
       </div>
 
       <div class="ui-g-12">
-          <button pButton label="Nova Pessoa"></button>
+          <a pButton label="Nova Pessoa" routerLink="/pessoas/novo"></a>
       </div>
-
 
     </div>
   </div>
