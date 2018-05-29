@@ -63,21 +63,16 @@ export class LancamentoService {
     return this.http.post(this.lancamentosUrl, JSON.stringify(lancamento), {headers: this.cabecalho});
   }
 
-  atualizar(lancamento: Lancamento) {
+  atualizar(lancamento: Lancamento): Observable<any> {
     return this.http.put(`${this.lancamentosUrl}/${lancamento.codigo}`,
-        JSON.stringify(lancamento), { headers: this.cabecalho })
-        .subscribe(response => {
-        const lancamentoAlterado = response as Lancamento;
-        this.converterStringsParaDatas([lancamentoAlterado]);
-        return lancamentoAlterado;
-        });
+        JSON.stringify(lancamento), { headers: this.cabecalho });
   }
 
   buscarPorCodigo(codigo: number): Observable<any> {
     return this.http.get(`${this.lancamentosUrl}/${codigo}`, { headers: this.cabecalho });
   }
 
-  private converterStringsParaDatas(lancamentos: Lancamento[]) {
+  converterStringsParaDatas(lancamentos: Lancamento[]) {
     for (const lancamento of lancamentos) {
       lancamento.dataVencimento = moment(lancamento.dataVencimento,
         'YYYY-MM-DD').toDate();

@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { ErrorHandlerService } from './error-handler.service';
 import { CategoriaService } from '../categorias/categoria.service';
 import { RouterModule } from '@angular/router';
+import { PaginaNaoEncontradaComponent } from './pagina-nao-encontrada.component';
 
 @NgModule({
   imports: [
@@ -18,7 +19,7 @@ import { RouterModule } from '@angular/router';
     ToastyModule.forRoot(),
     ConfirmDialogModule
   ],
-  declarations: [NavbarComponent],
+  declarations: [NavbarComponent, PaginaNaoEncontradaComponent],
   exports: [NavbarComponent, ToastyModule, ConfirmDialogModule],
   providers: [
     ErrorHandlerService,

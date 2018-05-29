@@ -28,6 +28,6 @@ import { RouterModule } from '@angular/router';
     SharedModule
   ],
   declarations: [PessoaCadastroComponent, PessoasPesquisaComponent],
-  exports: [PessoaCadastroComponent, PessoasPesquisaComponent]
+  exports: []
 })
 export class PessoasModule { }
