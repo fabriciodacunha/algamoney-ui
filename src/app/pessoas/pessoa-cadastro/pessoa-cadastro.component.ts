@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { Pessoa } from '../../core/model';
 import { ErrorHandlerService } from '../../core/error-handler.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pessoa-cadastro',
@@ -17,10 +18,12 @@ export class PessoaCadastroComponent implements OnInit {
   constructor(
     private pessoaService: PessoaService,
     private errorHandler: ErrorHandlerService,
-    private toasty: ToastyService
+    private toasty: ToastyService,
+    private title: Title
   ) { }
 
   ngOnInit() {
+    this.title.setTitle('Nova de Pessoa');
   }
   salvar(form: FormControl) {
     console.log(this.pessoa);
@@ -29,6 +32,10 @@ export class PessoaCadastroComponent implements OnInit {
       this.pessoa = new Pessoa;
       this.toasty.success('Lançamento adicionado com sucesso!');
     }, erro => this.errorHandler.hendle(erro));
+  }
+
+  atualizarTituloEdicao() {
+    this.title.setTitle(`Edição de lançamento: ${this.pessoa.nome}`);
   }
 
 }

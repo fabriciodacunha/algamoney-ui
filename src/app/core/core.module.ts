@@ -10,6 +10,8 @@ import { ErrorHandlerService } from './error-handler.service';
 import { CategoriaService } from '../categorias/categoria.service';
 import { RouterModule } from '@angular/router';
 import { PaginaNaoEncontradaComponent } from './pagina-nao-encontrada.component';
+import { Title } from '@angular/platform-browser';
+import { AuthService } from '../seguranca/auth.service';
 
 @NgModule({
   imports: [
@@ -28,6 +30,8 @@ import { PaginaNaoEncontradaComponent } from './pagina-nao-encontrada.component'
     PessoaFiltro,
     ConfirmationService,
     CategoriaService,
+    Title,
+    AuthService,
     {provide: LOCALE_ID, useValue: 'pt-BR'}]
 })
 export class CoreModule { }

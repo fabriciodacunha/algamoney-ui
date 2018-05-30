@@ -8,6 +8,7 @@ import { CategoriaService } from '../../categorias/categoria.service';
 import { ErrorHandlerService } from '../../core/error-handler.service';
 import { Lancamento } from '../../core/model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-lancamento-cadastro',
@@ -33,11 +34,15 @@ export class LancamentoCadastroComponent implements OnInit {
     private toasty: ToastyService,
     private pessoaFiltro: PessoaFiltro,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private title: Title
   ) { }
 
   ngOnInit() {
     const codigoLancamento = this.route.snapshot.params['codigo'];
+
+    this.title.setTitle('Novo Laçamento');
+
     if (codigoLancamento) {
       this.carregarLancamento(codigoLancamento);
     }
@@ -56,6 +61,7 @@ export class LancamentoCadastroComponent implements OnInit {
       const lancamento = response as Lancamento;
       this.lancamentoService.converterStringsParaDatas([lancamento]);
       this.lancamento = lancamento;
+      this.atualizarTituloEdicao();
     }, erro => this.errorHandler.hendle(erro)
     );
   }
@@ -69,6 +75,7 @@ export class LancamentoCadastroComponent implements OnInit {
         this.lancamentoService.converterStringsParaDatas([lancamentoAlterado]);
         this.toasty.success('Lançamento editado com sucesso!');
         this.router.navigate(['/lancamentos']);
+        this.atualizarTituloEdicao();
         }, erro => this.errorHandler.hendle(erro)
       );
     } else {
@@ -105,6 +112,10 @@ export class LancamentoCadastroComponent implements OnInit {
         return {label: c.nome, value: c.codigo};
       });
     }, erro => this.errorHandler.hendle(erro));
+  }
+
+  atualizarTituloEdicao() {
+    this.title.setTitle(`Edição de lançamento: ${this.lancamento.descricao}`);
   }
 
 }
