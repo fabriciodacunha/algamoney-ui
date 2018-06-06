@@ -57,12 +57,10 @@ export class LancamentoCadastroComponent implements OnInit {
 
   carregarLancamento(codigo: number) {
     this.lancamentoService.buscarPorCodigo(codigo)
-    .subscribe(response => {
-      const lancamento = response as Lancamento;
-      this.lancamentoService.converterStringsParaDatas([lancamento]);
-      this.lancamento = lancamento;
+    .then(response => {
+      this.lancamento = response;
       this.atualizarTituloEdicao();
-    }, erro => this.errorHandler.hendle(erro)
+    }, erro => this.errorHandler.handle(erro)
     );
   }
 
@@ -70,13 +68,12 @@ export class LancamentoCadastroComponent implements OnInit {
     if (this.lancamento.codigo) {
       console.log('Salvando lançamento editado...');
       this.lancamentoService.atualizar(this.lancamento)
-      .subscribe(response => {
-        const lancamentoAlterado = response as Lancamento;
-        this.lancamentoService.converterStringsParaDatas([lancamentoAlterado]);
+      .then(response => {
+        const lancamentoAlterado = response;
         this.toasty.success('Lançamento editado com sucesso!');
         this.router.navigate(['/lancamentos']);
         this.atualizarTituloEdicao();
-        }, erro => this.errorHandler.hendle(erro)
+        }, erro => this.errorHandler.handle(erro)
       );
     } else {
       console.log('Salvando novo lançamento...');
@@ -84,7 +81,7 @@ export class LancamentoCadastroComponent implements OnInit {
       .subscribe(() => {
         this.toasty.success('Lançamento adicionado com sucesso!');
         this.router.navigate(['/lancamentos']);
-      }, erro => this.errorHandler.hendle(erro)
+      }, erro => this.errorHandler.handle(erro)
       );
     }
   }
@@ -100,18 +97,18 @@ export class LancamentoCadastroComponent implements OnInit {
 
   carregaPessoas() {
     return this.pessoaService.listar(this.pessoaFiltro).subscribe(pessoas => {
-      this.pessoas = pessoas.map(p => {
+      this.pessoas = pessoas.json().map(p => {
         return {label: p.nome, value: p.codigo};
       });
-    }, erro => this.errorHandler.hendle(erro));
+    }, erro => this.errorHandler.handle(erro));
   }
 
   carregarCategorias() {
     return this.categoriaService.listarTodas().subscribe(categorias => {
-      this.categorias = categorias.map(c => {
+      this.categorias = categorias.json().map(c => {
         return {label: c.nome, value: c.codigo};
       });
-    }, erro => this.errorHandler.hendle(erro));
+    }, erro => this.errorHandler.handle(erro));
   }
 
   atualizarTituloEdicao() {

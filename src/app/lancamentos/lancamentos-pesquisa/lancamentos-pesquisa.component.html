@@ -61,7 +61,7 @@
                 <ng-template pTemplate="summary" let-rowData>
                     <div style="text-align:left" #botoesEditarExcluir style="display: none;">
                         <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" [routerLink]="['/lancamentos',selectedLancamento]" ></button>
-                        <button pButton icon="fa-trash" pTooltip="Excluir" tooltipPosition="top" (click)="apagar()" ></button>
+                        <button pButton icon="fa-trash" pTooltip="Excluir" tooltipPosition="top" (click)="apagar()" [disabled]="!auth.temPermissao('ROLE_REMOVER_LANCAMENTO')" ></button>
                     </div>
                 </ng-template>
               </p-table>

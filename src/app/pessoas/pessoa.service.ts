@@ -1,8 +1,9 @@
+import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { Pessoa } from '../core/model';
+import { AuthHttp } from 'angular2-jwt';
 
 export class PessoaFiltro {
   nome: string;
@@ -13,13 +14,10 @@ export class PessoaFiltro {
 @Injectable()
 export class PessoaService {
 
-  pessoasUrl = 'http://localhost:8080/pessoas';
-  cabecalho: HttpHeaders;
+  pessoasUrl: string;
 
-  constructor(private http: HttpClient) {
-    this.cabecalho = new HttpHeaders;
-    this.cabecalho = this.cabecalho.set('Content-Type', 'application/json');
-    this.cabecalho = this.cabecalho.set('Authorization', 'Basic YWRtaW5AYWxnYW1vbmV5LmNvbTphZG1pbg==');
+  constructor(private http: AuthHttp) {
+    this.pessoasUrl = `${environment.apiUrl}/pessoas`;
    }
 
   listar(filtro: PessoaFiltro): Observable<any> {
@@ -32,21 +30,20 @@ export class PessoaService {
     if (filtro.nome) {
       nome = filtro.nome;
     }
-    const params = new HttpParams()
-      .set('nome', nome);
-    return this.http.get(`${this.pessoasUrl}`, {headers: this.cabecalho, params});
+
+    return this.http.get(`${this.pessoasUrl}`);
   }
 
   excluir(codigo: number) {
-    return this.http.delete(`${this.pessoasUrl}/${codigo}`, {headers: this.cabecalho});
+    return this.http.delete(`${this.pessoasUrl}/${codigo}`);
   }
 
   editarAtivo(ativo: boolean, codigo: number) {
     console.log(`Mudar Ativo para ${ativo}: pessoa ${codigo}`);
-    return this.http.put(`${this.pessoasUrl}/${codigo}/ativo`, ativo, {headers: this.cabecalho});
+    return this.http.put(`${this.pessoasUrl}/${codigo}/ativo`, ativo);
   }
   adicionar(pessoa: Pessoa): Observable<any> {
-    return this.http.post(this.pessoasUrl, JSON.stringify(pessoa), {headers: this.cabecalho});
+    return this.http.post(this.pessoasUrl, JSON.stringify(pessoa));
   }
 
 }

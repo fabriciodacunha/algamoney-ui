@@ -1,10 +1,13 @@
+import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
+import { HttpResponse} from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
 import * as moment from 'moment';
 import { Lancamento } from '../core/model';
+import { AuthHttp } from 'angular2-jwt';
+import { URLSearchParams } from '@angular/http';
 
 export class LancamentoFiltro {
   descricao: string;
@@ -17,60 +20,81 @@ export class LancamentoFiltro {
 @Injectable()
 export class LancamentoService {
 
-  lancamentosUrl = 'http://localhost:8080/lancamentos';
-  cabecalho: HttpHeaders;
+  lancamentosUrl: string;
 
-  constructor(private http: HttpClient) {
-    this.cabecalho = new HttpHeaders;
-    this.cabecalho = this.cabecalho.set('Content-Type', 'application/json');
-    this.cabecalho = this.cabecalho.set('Authorization', 'Basic YWRtaW5AYWxnYW1vbmV5LmNvbTphZG1pbg==');
+  constructor(private http: AuthHttp) {
+    this.lancamentosUrl = `${environment.apiUrl}/lancamentos`;
    }
 
-  listar(filtro: LancamentoFiltro): Observable<any> {
+  listar(filtro: LancamentoFiltro): Promise<any> {
 
-    let descricao = '';
-    let dataVencimentoDe = '';
-    let dataVencimentoAte = '';
-    let page = '0';
-    let size = '5';
+    const params = new URLSearchParams();
 
-    page = filtro.page.toString();
-    size = filtro.size.toString();
+    params.set('page', filtro.page.toString());
+    params.set('size', filtro.size.toString());
+
 
     if (filtro.descricao) {
-      descricao = filtro.descricao;
+      params.set('descricao', filtro.descricao);
     }
+
     if (filtro.dataVencimentoDe) {
-      dataVencimentoDe = moment(filtro.dataVencimentoDe).format('YYYY-MM-DD');
+      params.set('dataVencimentoDe',
+        moment(filtro.dataVencimentoDe).format('YYYY-MM-DD'));
     }
+
     if (filtro.dataVencimentoAte) {
-      dataVencimentoAte = moment(filtro.dataVencimentoAte).format('YYYY-MM-DD');
+      params.set('dataVencimentoAte',
+        moment(filtro.dataVencimentoAte).format('YYYY-MM-DD'));
     }
-    const params = new HttpParams()
-      .set('descricao', descricao)
-      .set('dataVencimentoDe', dataVencimentoDe)
-      .set('dataVencimentoAte', dataVencimentoAte)
-      .set('page', page)
-      .set('size', size) ;
-    return this.http.get(`${this.lancamentosUrl}?resumo`, {headers: this.cabecalho, params});
+
+    return this.http.get(`${this.lancamentosUrl}?resumo`, {search: params})
+      .toPromise()
+      .then(response => {
+        const responseJson = response.json();
+        const lancamentos = responseJson.content;
+
+        const resultado = {
+          lancamentos,
+          total: responseJson.totalElements
+        };
+
+        return resultado;
+});
   }
 
   excluir(codigo: number) {
-    return this.http.delete(`${this.lancamentosUrl}/${codigo}`, {headers: this.cabecalho});
+    return this.http.delete(`${this.lancamentosUrl}/${codigo}`);
   }
 
   adicionar(lancamento: Lancamento): Observable<any> {
-    return this.http.post(this.lancamentosUrl, JSON.stringify(lancamento), {headers: this.cabecalho});
+    return this.http.post(this.lancamentosUrl, JSON.stringify(lancamento));
   }
 
-  atualizar(lancamento: Lancamento): Observable<any> {
+  atualizar(lancamento: Lancamento): Promise<Lancamento> {
     return this.http.put(`${this.lancamentosUrl}/${lancamento.codigo}`,
-        JSON.stringify(lancamento), { headers: this.cabecalho });
-  }
+        JSON.stringify(lancamento))
+      .toPromise()
+      .then(response => {
+        const lancamentoAlterado = response.json() as Lancamento;
 
-  buscarPorCodigo(codigo: number): Observable<any> {
-    return this.http.get(`${this.lancamentosUrl}/${codigo}`, { headers: this.cabecalho });
-  }
+        this.converterStringsParaDatas([lancamentoAlterado]);
+
+        return lancamentoAlterado;
+      });
+}
+
+  buscarPorCodigo(codigo: number): Promise<Lancamento> {
+    return this.http.get(`${this.lancamentosUrl}/${codigo}`)
+      .toPromise()
+      .then(response => {
+        const lancamento = response.json() as Lancamento;
+
+        this.converterStringsParaDatas([lancamento]);
+
+        return lancamento;
+      });
+}
 
   converterStringsParaDatas(lancamentos: Lancamento[]) {
     for (const lancamento of lancamentos) {

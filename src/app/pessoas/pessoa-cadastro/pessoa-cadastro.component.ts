@@ -31,7 +31,7 @@ export class PessoaCadastroComponent implements OnInit {
       form.reset();
       this.pessoa = new Pessoa;
       this.toasty.success('Lançamento adicionado com sucesso!');
-    }, erro => this.errorHandler.hendle(erro));
+    }, erro => this.errorHandler.handle(erro));
   }
 
   atualizarTituloEdicao() {

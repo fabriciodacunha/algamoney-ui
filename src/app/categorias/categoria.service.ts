@@ -1,24 +1,19 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from './../../environments/environment';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
+import { AuthHttp } from 'angular2-jwt';
 
 @Injectable()
 export class CategoriaService {
 
-  categoriasUrl = 'http://localhost:8080/categorias';
-  cabecalho: HttpHeaders;
+  categoriasUrl: string;
 
-  constructor(private http: HttpClient) {
-    this.cabecalho = new HttpHeaders;
-    this.cabecalho = this.cabecalho.set('Content-Type', 'application/json');
-    this.cabecalho = this.cabecalho.set('Authorization', 'Basic YWRtaW5AYWxnYW1vbmV5LmNvbTphZG1pbg==');
+  constructor(private http: AuthHttp) {
+    this.categoriasUrl = `${environment.apiUrl}/categorias`;
    }
 
   listarTodas(): Observable<any> {
-    const headers = new HttpHeaders();
-    headers.set('Authorization', 'Basic YWRtaW5AYWxnYW1vbmV5LmNvbTphZG1pbg==');
-
-    return this.http.get(this.categoriasUrl, { headers: this.cabecalho });
+    return this.http.get(this.categoriasUrl);
   }
 
 }

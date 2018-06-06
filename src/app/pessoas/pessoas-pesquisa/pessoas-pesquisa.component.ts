@@ -46,32 +46,32 @@ export class PessoasPesquisaComponent implements OnInit {
 
     this.pessoaService.listar(this.filtro)
     .subscribe(jsonPessoas => {
-      this.pessoas = jsonPessoas;
+      this.pessoas = jsonPessoas.json();
       this.loading = false;
-      this.botoesEditarExcluir.nativeElement.style.display = 'none';
+     this.botoesEditarExcluir.nativeElement.style.display = 'none';
     }, erro => {
-      this.errorHandler.hendle(erro);
+      this.errorHandler.handle(erro);
     });
-    }
+  }
 
-    apagar() {
-      this.confirmationService.confirm(
-        {
-          message: 'Confirma a exclusão de ' + this.selectedPessoa.nome + '?',
-          accept: () => {
-                        this.pessoaService.excluir(this.selectedPessoa.codigo)
-                        .subscribe(
-                          () => {
-                            this.pessoas = this.pessoas.filter(lancs => lancs.codigo !== this.selectedPessoa.codigo);
-                            this.toastyService.success(`Registro de ${this.selectedPessoa.nome} foi excluido com sucesso`);
-                            this.botoesEditarExcluir.nativeElement.style.display = 'none';
-                          }, erro => {
-                            this.errorHandler.hendle(erro);
-                          });
-                        }
-        }
-      );
-    }
+  apagar() {
+    this.confirmationService.confirm(
+      {
+        message: 'Confirma a exclusão de ' + this.selectedPessoa.nome + '?',
+        accept: () => {
+                      this.pessoaService.excluir(this.selectedPessoa.codigo)
+                      .subscribe(
+                        () => {
+                          this.pessoas = this.pessoas.filter(lancs => lancs.codigo !== this.selectedPessoa.codigo);
+                          this.toastyService.success(`Registro de ${this.selectedPessoa.nome} foi excluido com sucesso`);
+                          this.botoesEditarExcluir.nativeElement.style.display = 'none';
+                        }, erro => {
+                          this.errorHandler.handle(erro);
+                        });
+                      }
+      }
+    );
+  }
 
     toggleAtivoInativo(pessoa: any) {
       console.log(pessoa.ativo);
@@ -81,7 +81,7 @@ export class PessoasPesquisaComponent implements OnInit {
         const acao = tggl ? 'ativado' : 'desativado';
         pessoa.ativo = tggl;
         this.toastyService.success(`Status de ${pessoa.nome} ${acao} com sucesso!`);
-      }, erro => this.errorHandler.hendle(erro));
+      }, erro => this.errorHandler.handle(erro));
     }
 
     onRowSelect(event) {

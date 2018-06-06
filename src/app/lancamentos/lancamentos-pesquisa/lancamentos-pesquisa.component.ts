@@ -5,6 +5,7 @@ import { HttpEventType } from '@angular/common/http';
 import { ToastyService } from 'ng2-toasty';
 import { ErrorHandlerService } from '../../core/error-handler.service';
 import { Title } from '@angular/platform-browser';
+import { AuthService } from '../../seguranca/auth.service';
 
 @Component({
   selector: 'app-lancamentos-pesquisa',
@@ -24,6 +25,7 @@ export class LancamentosPesquisaComponent implements OnInit {
 
   constructor(
     private lancamentoService: LancamentoService,
+    private auth: AuthService,
     private errorHandler: ErrorHandlerService,
     private toastyService: ToastyService,
     private confirmationService: ConfirmationService,
@@ -40,13 +42,14 @@ export class LancamentosPesquisaComponent implements OnInit {
     this.filtro.page = pagina;
 
     this.lancamentoService.listar(this.filtro)
-    .subscribe(jsonLancamentos => {
-      this.totalRecords = jsonLancamentos.totalElements;
-      this.lancamentos = jsonLancamentos.content;
+    .then(jsonLancamentos => {
+      console.log(jsonLancamentos);
+      this.totalRecords = jsonLancamentos.total;
+      this.lancamentos = jsonLancamentos.lancamentos;
       this.loading = false;
       this.botoesEditarExcluir.nativeElement.style.display = 'none';
     }, erro => {
-      this.errorHandler.hendle(erro);
+      this.errorHandler.handle(erro);
     });
     }
 
@@ -62,7 +65,7 @@ export class LancamentosPesquisaComponent implements OnInit {
                             this.toastyService.success(`Lançamento ${this.selectedLancamento} excluido com sucesso`);
                             this.botoesEditarExcluir.nativeElement.style.display = 'none';
                           }, erro => {
-                            this.errorHandler.hendle(erro);
+                            this.errorHandler.handle(erro);
                           });
                         }
         }
